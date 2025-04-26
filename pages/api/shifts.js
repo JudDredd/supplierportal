@@ -1,4 +1,5 @@
 // File: pages/api/shifts.js
+
 export default async function handler(req, res) {
   if (!process.env.FM_HOST || !process.env.FM_DATABASE) {
     console.error('Missing FM_HOST or FM_DATABASE in env');

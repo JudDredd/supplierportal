@@ -9,8 +9,8 @@ const nextConfig = {
     FM_VALUE_LIST: process.env.FM_VALUE_LIST
   },
   webpack: (config) => {
-    // Prefer ESM 'module' field and support .mjs extensions for lucide-react
-    config.resolve.mainFields = ['browser', 'module', 'main'];
+    // Prioritize the ES module entry for lucide-react to avoid CJS icon resolution errors
+    config.resolve.mainFields = ['module', 'main', 'browser'];
     config.resolve.extensions.push('.mjs');
     return config;
   }

@@ -1,7 +1,6 @@
 // File: components/ShiftTable.jsx
 import React from "react";
-import Phone from "lucide-react/dist/esm/icons/phone.js";
-import MessageCircle from "lucide-react/dist/esm/icons/message-circle.js";
+import { Phone, MessageCircle } from "lucide-react/dist/esm/lucide-react.js";
 
 export default function ShiftTable({ shifts, drivers, onAssign }) {
   return (

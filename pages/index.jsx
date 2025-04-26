@@ -10,22 +10,23 @@ export default function Home() {
   const [drivers, setDrivers] = useState([]);
 
   const fetchData = async () => {
-    let query = new URLSearchParams();
-    if (filters.event) query.append("eventId", filters.event);
-    if (filters.city) query.append("city", filters.city);
-    if (filters.date) query.append("date", filters.date);
-    const supplierId = "REPLACE_WITH_SUPPLIER_ID";
-    // Only append supplierId if it has been set
+    // Build query params based on filters
+    const params = new URLSearchParams();
+    if (filters.event) params.append("eventId", filters.event);
+    if (filters.city) params.append("city", filters.city);
+    if (filters.date) params.append("date", filters.date);
+
+    // Only append supplierId if replaced with a real ID
+    const supplierId = process.env.NEXT_PUBLIC_SUPPLIER_ID;
     if (supplierId && supplierId !== "REPLACE_WITH_SUPPLIER_ID") {
-      query.append("supplierId", supplierId);
+      params.append("supplierId", supplierId);
     }
 
-    const url = `/api/shifts?${query.toString()}`;
+    const url = `/api/shifts?${params.toString()}`;
     console.log("[Home] fetchData URL:", url);
     try {
       const res = await fetch(url);
-      console.log("[Home] fetchData response status:", res.status);
-      if (!res.ok) throw new Error(`Fetch error: ${res.statusText}`);
+      console.log("[Home] fetchData status:", res.status);
       const data = await res.json();
       console.log("[Home] fetchData data:", data);
       setShifts(Array.isArray(data.shifts) ? data.shifts : []);
@@ -42,18 +43,14 @@ export default function Home() {
 
   const handleAssign = async (shiftId, driverId) => {
     const url = `/api/shifts_id?id=${shiftId}`;
-    console.log("[Home] handleAssign URL:", url, "payload:", { id_Employee: driverId });
+    console.log("[Home] handleAssign:", url, { id_Employee: driverId });
     try {
       const res = await fetch(url, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_Employee: driverId })
       });
-      console.log("[Home] handleAssign response status:", res.status);
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Assignment error: ${text}`);
-      }
+      console.log("[Home] handleAssign status:", res.status);
       fetchData();
     } catch (err) {
       console.error("[Home] handleAssign error:", err);

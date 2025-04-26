@@ -15,7 +15,9 @@ export default function Home() {
     if (filters.city) query.append("city", filters.city);
     if (filters.date) query.append("date", filters.date);
     const supplierId = "REPLACE_WITH_SUPPLIER_ID";
-    query.append("supplierId", supplierId);
+    if (supplierId !== "REPLACE_WITH_SUPPLIER_ID") {
+      query.append("supplierId", supplierId);
+    }
 
     const url = `/api/shifts?${query.toString()}`;
     console.log("[Home] fetchData URL:", url);

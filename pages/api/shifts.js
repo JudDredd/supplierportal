@@ -20,7 +20,6 @@ export default async function handler(req, res) {
   const fmData = await fmRes.json();
   const shifts = fmData.response.data.map(rec => ({ id: rec.recordId, ...rec.fieldData }));
 
-  // Fetch drivers similarly, if needed:
   const drvUrl = `${process.env.FM_HOST}/fmi/data/v1/databases/${encodeURIComponent(process.env.FM_DATABASE)}/layouts/DriverList/records`;
   const drvRes = await fetch(drvUrl, {
     method: "POST",

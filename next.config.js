@@ -1,7 +1,5 @@
 /** File: next.config.js */
 /** @type {import('next').NextConfig} */
-const path = require('path');
-
 const nextConfig = {
   env: {
     FM_HOST: process.env.FM_HOST,
@@ -11,12 +9,15 @@ const nextConfig = {
     FM_VALUE_LIST: process.env.FM_VALUE_LIST
   },
   webpack: (config) => {
-    // Alias lucide-react to the ESM build to avoid missing CJS icon modules
+    // Alias specific CJS paths to ESM builds for lucide-react
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
-      'lucide-react': require.resolve('lucide-react/dist/esm/lucide-react.js')
+      'lucide-react': require.resolve('lucide-react/dist/esm/lucide-react.js'),
+      'lucide-react/dist/cjs/lucide-react.js': require.resolve('lucide-react/dist/esm/lucide-react.js'),
+      'lucide-react/dist/cjs/icons/phone': require.resolve('lucide-react/dist/esm/icons/phone.js'),
+      'lucide-react/dist/cjs/icons/message-circle': require.resolve('lucide-react/dist/esm/icons/message-circle.js')
     };
-    // Ensure .mjs files and module fields are resolved
+    // Support .mjs extensions and prefer ESM entry points
     config.resolve.extensions.push('.mjs');
     config.resolve.mainFields = ['module', 'main', 'browser'];
     return config;
@@ -24,11 +25,3 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
-
-
-/** File: .env.local (no changes needed here) */
-FM_HOST=https://portal.axleevents.com
-FM_DATABASE=Axle Events
-FM_USERNAME=Admin
-FM_PASSWORD=oy!)MHuGgnj.Kf
-FM_VALUE_LIST=SupplierRoles

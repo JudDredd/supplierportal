@@ -1,6 +1,6 @@
 // File: components/ShiftCard.jsx
 import React from "react";
-import { Phone, MessageCircle } from "lucide-react/dist/esm/lucide-react.js";
+import { Phone, MessageCircle } from "lucide-react";
 
 export default function ShiftCard({ shift, drivers, onAssign }) {
   return (

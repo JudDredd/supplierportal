@@ -14,7 +14,6 @@ export default function Home() {
     if (filters.event) query.append("eventId", filters.event);
     if (filters.city) query.append("city", filters.city);
     if (filters.date) query.append("date", filters.date);
-    // TODO: replace with real supplier ID
     const supplierId = "REPLACE_WITH_SUPPLIER_ID";
     query.append("supplierId", supplierId);
 
@@ -26,8 +25,8 @@ export default function Home() {
       if (!res.ok) throw new Error(`Fetch error: ${res.statusText}`);
       const data = await res.json();
       console.log("[Home] fetchData data:", data);
-      setShifts(data.shifts || []);
-      setDrivers(data.drivers || []);
+      setShifts(Array.isArray(data.shifts) ? data.shifts : []);
+      setDrivers(Array.isArray(data.drivers) ? data.drivers : []);
     } catch (err) {
       console.error("[Home] fetchData error:", err);
     }

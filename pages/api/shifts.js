@@ -9,7 +9,9 @@ export default async function handler(req, res) {
   const url = `${process.env.FM_HOST}/fmi/data/v1/databases/${encodeURIComponent(process.env.FM_DATABASE)}/layouts/ListShiftsTransfers/records`;
   console.log('[API] shifts URL:', url, 'query:', { supplierId, eventId, city, date });
   const queryObj = {};
-  if (supplierId) queryObj.supplierId = supplierId;
+  if (supplierId && supplierId !== "REPLACE_WITH_SUPPLIER_ID") {
+    queryObj.supplierId = supplierId;
+  }  
   if (eventId)    queryObj.eventId = eventId;
   if (city)       queryObj.city = city;
   if (date)       queryObj.date = date;

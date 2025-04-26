@@ -1,4 +1,5 @@
 import React from "react";
+import { Phone, MessageCircle } from "lucide-react";
 
 export default function ShiftCard({ shift, drivers, onAssign }) {
   return (
@@ -6,11 +7,14 @@ export default function ShiftCard({ shift, drivers, onAssign }) {
       <div className="flex justify-between items-center">
         <div>
           <div className="font-bold">{new Date(shift.Date).toLocaleDateString()}</div>
-          <div>{shift.City}</div>
+          <div>{shift.ArtistClientEvent}</div>
+          <div className="text-sm italic">{shift.Job_Summary}</div>
+          <div className="text-sm">Role: {shift.c_VehRole}</div>
+          <div className="text-sm">PO: {shift.PONumber}</div>
         </div>
         <div>
           <select
-            className="p-2 border rounded"
+            className="p-2 border rounded mb-2"
             value={shift.id_Employee || ""}
             onChange={(e) => onAssign(shift.id, e.target.value)}
           >
@@ -21,12 +25,18 @@ export default function ShiftCard({ shift, drivers, onAssign }) {
               </option>
             ))}
           </select>
+          {shift.id_Employee && (
+            <div className="flex items-center gap-2 mt-2">
+              <a href={`tel:${shift.Phone}`}><Phone size={16} /></a>
+              <a href={`https://wa.me/${shift.Phone.replace(/\D/g, "")}`}><MessageCircle size={16} /></a>
+              <span>{shift.c_FullName}</span>
+            </div>
+          )}
         </div>
       </div>
       <div className="mt-2">
-        <div className="italic">{shift.Job_Summary}</div>
-        <div className="text-sm">Role: {shift.c_VehRole}</div>
-        <div className="text-sm">Status: {shift.ShiftStatus}</div>
+        <div className="text-sm">Contact: {shift.Fullname}</div>
+        <div className="text-sm">City: {shift.City}</div>
       </div>
     </div>
   );

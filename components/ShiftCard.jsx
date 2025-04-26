@@ -36,5 +36,6 @@ export default function ShiftCard({ shift, drivers, onAssign }) {
         </div>
       </div>
     </div>
-    );
+  );
 }
+

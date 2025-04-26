@@ -1,8 +1,12 @@
+/** File: next.config.js */
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    FILEMAKER_API_URL: process.env.FILEMAKER_API_URL,
-    FILEMAKER_API_TOKEN: process.env.FILEMAKER_API_TOKEN
+    FM_HOST: process.env.FM_HOST,
+    FM_DATABASE: process.env.FM_DATABASE,
+    FM_USERNAME: process.env.FM_USERNAME,
+    FM_PASSWORD: process.env.FM_PASSWORD,
+    FM_VALUE_LIST: process.env.FM_VALUE_LIST
   },
   webpack: (config) => {
     // Prefer ESM 'module' field and support .mjs extensions for lucide-react
@@ -13,3 +17,11 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+
+
+/** File: .env.local (update this with your credentials) */
+FM_HOST=https://portal.axleevents.com
+FM_DATABASE=Axle Events
+FM_USERNAME=Admin
+FM_PASSWORD=oy!)MHuGgnj.Kf
+FM_VALUE_LIST=SupplierRoles

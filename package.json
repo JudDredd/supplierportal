@@ -1,3 +1,4 @@
+// File: package.json
 {
   "name": "supplier-portal",
   "version": "1.0.0",
@@ -13,7 +14,6 @@
     "tailwindcss": "^3.4.2",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
-    "@shadcn/ui": "latest",
     "lucide-react": "latest"
   }
 }

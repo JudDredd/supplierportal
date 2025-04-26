@@ -15,7 +15,8 @@ export default function Home() {
     if (filters.city) query.append("city", filters.city);
     if (filters.date) query.append("date", filters.date);
     const supplierId = "REPLACE_WITH_SUPPLIER_ID";
-    if (supplierId !== "REPLACE_WITH_SUPPLIER_ID") {
+    // Only append supplierId if it has been set
+    if (supplierId && supplierId !== "REPLACE_WITH_SUPPLIER_ID") {
       query.append("supplierId", supplierId);
     }
 

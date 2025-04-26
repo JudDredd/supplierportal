@@ -1,5 +1,7 @@
 /** File: next.config.js */
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   env: {
     FM_HOST: process.env.FM_HOST,
@@ -9,9 +11,14 @@ const nextConfig = {
     FM_VALUE_LIST: process.env.FM_VALUE_LIST
   },
   webpack: (config) => {
-    // Prioritize the ES module entry for lucide-react to avoid CJS icon resolution errors
-    config.resolve.mainFields = ['module', 'main', 'browser'];
+    // Alias lucide-react to the ESM build to avoid missing CJS icon modules
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      'lucide-react': require.resolve('lucide-react/dist/esm/lucide-react.js')
+    };
+    // Ensure .mjs files and module fields are resolved
     config.resolve.extensions.push('.mjs');
+    config.resolve.mainFields = ['module', 'main', 'browser'];
     return config;
   }
 };
@@ -19,7 +26,7 @@ const nextConfig = {
 module.exports = nextConfig;
 
 
-/** File: .env.local (update this with your credentials) */
+/** File: .env.local (no changes needed here) */
 FM_HOST=https://portal.axleevents.com
 FM_DATABASE=Axle Events
 FM_USERNAME=Admin

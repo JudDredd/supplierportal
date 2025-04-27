@@ -1,36 +1,40 @@
 // File: pages/api/shifts.js
 export default async function handler(req, res) {
-  if (!process.env.FM_HOST || !process.env.FM_DATABASE) {
-    console.error('Missing FM_HOST or FM_DATABASE');
-    return res.status(500).json({ error: 'Server misconfiguration.' });
+  if (!process.env.FM_HOST || !process.env.FM_DATABASE || !process.env.FM_DATA_API_TOKEN) {
+    console.error('Missing FM_HOST, FM_DATABASE, or FM_DATA_API_TOKEN env var');
+    return res.status(500).json({ error: 'Server misconfiguration: required env vars missing.' });
   }
+
   const { eventId, city, date } = req.query;
-  // Use FileMaker Data API _find endpoint
-  const url = `${process.env.FM_HOST}/fmi/data/v1/databases/${encodeURIComponent(process.env.FM_DATABASE)}/layouts/ListShiftsTransfers/_find`;
-  console.log('[API] shifts URL:', url, 'query:', { eventId, city, date });
-  const queryReq = {};
-  if (city) queryReq.city = city;
-  if (eventId) queryReq.eventId = eventId;
-  if (date) queryReq.date = date;
-  const body = { query: [queryReq] };
+  // Use Data API _find endpoint for querying records
+  const shiftFindUrl = `${process.env.FM_HOST}/fmi/data/v1/databases/${encodeURIComponent(process.env.FM_DATABASE)}/layouts/ListShiftsTransfers/_find`;
+  console.log('[API] shifts _find URL:', shiftFindUrl, 'query:', { eventId, city, date });
+
+  const findQuery = {};
+  if (city)    findQuery.City = city;
+  if (eventId) findQuery.g_SearchEventNameDriverCal = eventId;
+  if (date)    findQuery.Date = date;
+
   try {
-    const fmRes = await fetch(url, {
+    // Fetch shifts
+    const shiftsRes = await fetch(shiftFindUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.FM_DATA_API_TOKEN}`
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify({ query: [findQuery] })
     });
-    const fmData = await fmRes.json();
-    console.log('[API] shifts response data:', fmData);
-    const shifts = Array.isArray(fmData.response?.data)
-      ? fmData.response.data.map(rec => ({ id: rec.recordId, ...rec.fieldData }))
+    const shiftsData = await shiftsRes.json();
+    console.log('[API] shifts response:', shiftsData);
+    const shifts = Array.isArray(shiftsData.response?.data)
+      ? shiftsData.response.data.map(rec => ({ id: rec.recordId, ...rec.fieldData }))
       : [];
 
-    const drvUrl = `${process.env.FM_HOST}/fmi/data/v1/databases/${encodeURIComponent(process.env.FM_DATABASE)}/layouts/DriverList/_find`;
-    console.log('[API] drivers URL:', drvUrl);
-    const drvRes = await fetch(drvUrl, {
+    // Fetch drivers (no filter)
+    const driverFindUrl = `${process.env.FM_HOST}/fmi/data/v1/databases/${encodeURIComponent(process.env.FM_DATABASE)}/layouts/DriverList/_find`;
+    console.log('[API] drivers _find URL:', driverFindUrl);
+    const driversRes = await fetch(driverFindUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,15 +42,15 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({ query: [{}] })
     });
-    const drvData = await drvRes.json();
-    console.log('[API] drivers response data:', drvData);
-    const drivers = Array.isArray(drvData.response?.data)
-      ? drvData.response.data.map(rec => ({ id: rec.recordId, ...rec.fieldData }))
+    const driversData = await driversRes.json();
+    console.log('[API] drivers response:', driversData);
+    const drivers = Array.isArray(driversData.response?.data)
+      ? driversData.response.data.map(rec => ({ id: rec.recordId, ...rec.fieldData }))
       : [];
 
-    res.status(200).json({ shifts, drivers });
+    return res.status(200).json({ shifts, drivers });
   } catch (err) {
     console.error('[API] handler error:', err);
-    res.status(500).json({ error: 'Failed to fetch from FileMaker.' });
+    return res.status(500).json({ error: 'Failed to fetch or parse FileMaker data.' });
   }
 }

@@ -16,9 +16,6 @@ export default function Home() {
     if (filters.city) params.append("city", filters.city);
     if (filters.date) params.append("date", filters.date);
 
-    const supplierId = process.env.NEXT_PUBLIC_SUPPLIER_ID;
-    if (supplierId) params.append("supplierId", supplierId);
-
     const url = `/api/shifts?${params.toString()}`;
     console.log("[Home] Fetching data from:", url);
     try {

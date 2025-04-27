@@ -5,30 +5,28 @@ import ShiftTable from "../components/ShiftTable";
 import ShiftCard from "../components/ShiftCard";
 
 export default function Home() {
-  const [filters, setFilters] = useState({ event: "", city: "", date: "" });
+  // Default city filter to ensure initial data load
+  const [filters, setFilters] = useState({ event: "", city: "Brisbane", date: "" });
   const [shifts, setShifts] = useState([]);
   const [drivers, setDrivers] = useState([]);
 
   const fetchData = async () => {
-    // Build query params based on filters
     const params = new URLSearchParams();
     if (filters.event) params.append("eventId", filters.event);
     if (filters.city) params.append("city", filters.city);
     if (filters.date) params.append("date", filters.date);
 
-    // Only append supplierId if replaced with a real ID
     const supplierId = process.env.NEXT_PUBLIC_SUPPLIER_ID;
-    if (supplierId && supplierId !== "REPLACE_WITH_SUPPLIER_ID") {
-      params.append("supplierId", supplierId);
-    }
+    if (supplierId) params.append("supplierId", supplierId);
 
     const url = `/api/shifts?${params.toString()}`;
-    console.log("[Home] fetchData URL:", url);
+    console.log("[Home] Fetching data from:", url);
     try {
       const res = await fetch(url);
-      console.log("[Home] fetchData status:", res.status);
+      console.log("[Home] Response status:", res.status);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      console.log("[Home] fetchData data:", data);
+      console.log("[Home] Received data:", data);
       setShifts(Array.isArray(data.shifts) ? data.shifts : []);
       setDrivers(Array.isArray(data.drivers) ? data.drivers : []);
     } catch (err) {
@@ -43,14 +41,15 @@ export default function Home() {
 
   const handleAssign = async (shiftId, driverId) => {
     const url = `/api/shifts_id?id=${shiftId}`;
-    console.log("[Home] handleAssign:", url, { id_Employee: driverId });
+    console.log("[Home] Assigning driver via:", url, { id_Employee: driverId });
     try {
       const res = await fetch(url, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_Employee: driverId })
       });
-      console.log("[Home] handleAssign status:", res.status);
+      console.log("[Home] Assign response status:", res.status);
+      if (!res.ok) throw new Error(`Failed to assign: HTTP ${res.status}`);
       fetchData();
     } catch (err) {
       console.error("[Home] handleAssign error:", err);

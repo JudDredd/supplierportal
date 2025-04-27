@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${Buffer.from(process.env.FM_USERNAME + ':' + process.env.FM_PASSWORD).toString('base64')}`
+        'Authorization': `Bearer ${process.env.FM_DATA_API_TOKEN}`
       },
       body: JSON.stringify(body)
     });
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${Buffer.from(process.env.FM_USERNAME + ':' + process.env.FM_PASSWORD).toString('base64')}`
+        'Authorization': `Bearer ${process.env.FM_DATA_API_TOKEN}`
       },
       body: JSON.stringify({ query: [{}] })
     });
